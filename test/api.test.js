@@ -6,7 +6,7 @@ import os from 'node:os';
 import path from 'node:path';
 test('HTTP 시험·계정·저장·소유권·OCR 권한 통합',{timeout:30000},async()=>{
   const directory=await mkdtemp(path.join(os.tmpdir(),'study-api-'));
-  const child=spawn(process.execPath,['server/index.js'],{env:{...process.env,AI_PROVIDER:'demo',PORT:'0',RUNTIME_DIR:directory},windowsHide:true,stdio:['ignore','pipe','pipe']});
+  const child=spawn(process.execPath,['server/index.js'],{env:{...process.env,AI_PROVIDER:'demo',ACCOUNTS_ENABLED:'1',PORT:'0',RUNTIME_DIR:directory},windowsHide:true,stdio:['ignore','pipe','pipe']});
   try{
     const base=await new Promise((resolve,reject)=>{let output='';const timer=setTimeout(()=>reject(Error('서버 시작 시간 초과')),10000);child.on('error',reject);child.stdout.on('data',b=>{output+=b;const match=output.match(/Local: (http:\/\/127.0.0.1:\d+)/);if(match){clearTimeout(timer);resolve(match[1]);}});});
     async function request(p,body,token,cookie){const r=await fetch(base+p,{method:body?'POST':'GET',headers:{'Content-Type':'application/json',...(token?{'X-Exam-Token':token}:{}),...(cookie?{Cookie:cookie}:{})},...(body?{body:JSON.stringify(body)}:{})});return {status:r.status,data:await r.json(),cookie:r.headers.get('set-cookie')?.split(';')[0]};}
@@ -25,5 +25,14 @@ test('HTTP 시험·계정·저장·소유권·OCR 권한 통합',{timeout:30000}
     assert.notEqual((await request('/api/records/'+saved.data.id,undefined,undefined,two.cookie)).status,200);
     assert.equal((await request('/api/exams',{ocr:true,level:'basic',count:1,file:{name:'scan.pdf',base64:'YQ=='}},undefined,one.cookie)).status,403);
     await request('/api/auth/logout',{},undefined,one.cookie);assert.equal((await request('/api/records',undefined,undefined,one.cookie)).status,401);
+  }finally{child.kill();await new Promise(resolve=>child.exitCode!==null?resolve():child.once('close',resolve));await rm(directory,{recursive:true,force:true});}
+});
+test('회원가입·기록 저장은 기본으로 꺼져 구현 중 안내를 반환',{timeout:30000},async()=>{
+  const directory=await mkdtemp(path.join(os.tmpdir(),'study-api-'));const env={...process.env,AI_PROVIDER:'demo',PORT:'0',RUNTIME_DIR:directory};delete env.ACCOUNTS_ENABLED;
+  const child=spawn(process.execPath,['server/index.js'],{env,windowsHide:true,stdio:['ignore','pipe','pipe']});
+  try{
+    const base=await new Promise((resolve,reject)=>{let output='';const timer=setTimeout(()=>reject(Error('서버 시작 시간 초과')),10000);child.on('error',reject);child.stdout.on('data',b=>{output+=b;const match=output.match(/Local: (http:\/\/127.0.0.1:\d+)/);if(match){clearTimeout(timer);resolve(match[1]);}});});
+    const config=await (await fetch(base+'/api/config')).json();assert.equal(config.accounts,false);assert.equal(config.user,null);
+    for(const p of ['/api/auth/register','/api/records']){const r=await fetch(base+p,{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});assert.equal(r.status,503);assert.match((await r.json()).error,/구현 중/);}
   }finally{child.kill();await new Promise(resolve=>child.exitCode!==null?resolve():child.once('close',resolve));await rm(directory,{recursive:true,force:true});}
 });
