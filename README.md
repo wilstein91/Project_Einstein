@@ -4,15 +4,6 @@
 
 이 `main` 브랜치는 **전체 기능 버전**입니다. 각자 PC에서 서버를 실행하며 PDF 읽기, 스캔 PDF OCR, 이메일 회원가입·로그인, 시험지 저장까지 모두 동작합니다.
 
-## Claude 실행 버전 (설치 없음 · `Claude_Share` 브랜치)
-> **바로 쓰기: https://claude.ai/artifact/AH2upZpLWUNtxnTgrZKyPY**
-> 코드: [`Claude_Share` 브랜치](https://github.com/wilstein91/Project_Einstein/tree/Claude_Share)
-
-- 이 링크는 `main`이 아니라 **`Claude_Share` 브랜치의 버전**입니다.
-- **AGENT 02 그룹 안에서만 사용할 수 있습니다.** claude.ai에 로그인한 상태로 열면 되고, 문제는 페이지를 연 사람 본인의 Claude 계정으로 만들어집니다.
-- 설치 없이 쓰는 대신 기능이 줄어 있습니다. 스캔 PDF OCR은 없고, 회원가입은 "구현 중"으로 꺼져 있으며, 시험 기록은 각자 브라우저에만 남습니다.
-- **전체 기능은 Git으로 이 레포를 받아 아래 방법대로 실행해야 쓸 수 있습니다.**
-
 ## 시작하기 (Windows)
 각자 PC에서 실행하고 **각자 Claude 계정**으로 문제를 만듭니다. 다른 사람의 계정이나 사용량을 쓰지 않습니다.
 
@@ -36,6 +27,9 @@ npm.cmd run doctor
 npm.cmd run dev
 ```
 Mac·Linux에서는 `npm.cmd` 대신 `npm`을 씁니다. 화면에 나온 `Local: http://127.0.0.1:3000` 주소를 브라우저로 엽니다. 3000번 포트가 사용 중이면 3001, 3002… 순서로 빈 포트를 자동으로 씁니다.
+
+> **설치 없이 써보기:** [`Claude_Share` 브랜치](https://github.com/wilstein91/Project_Einstein/tree/Claude_Share)의 Claude 실행 버전도 있습니다 → https://claude.ai/artifact/AH2upZpLWUNtxnTgrZKyPY
+> AGENT 02 그룹 안에서만 사용할 수 있고, OCR·회원가입은 빠져 있습니다. 전체 기능은 위 방법대로 Git으로 받아 실행하세요.
 
 ## 예제 자료
 처음 써볼 때는 [examples/업로드용_예제_멀티에이전트_노드요약.md](examples/업로드용_예제_멀티에이전트_노드요약.md)를 파일 첨부로 올려 보세요. 교안 멀티에이전트는 어떻게 적용할까?의 요약본입니다(약 22,000자). Claude 실행 버전에도 그대로 올릴 수 있습니다.
