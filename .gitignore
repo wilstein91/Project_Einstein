@@ -2,4 +2,3 @@ node_modules/
 .env
 .runtime/
 *.log
-artifact/einstein-app.html

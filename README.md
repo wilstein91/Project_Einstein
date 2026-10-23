@@ -2,15 +2,7 @@
 
 학습자료를 읽고 이해도를 확인하는 4지선다 시험 서비스입니다. 현재 로컬 서버에서 실제 AI 출제·채점·계정 저장·운영자 OCR까지 동작합니다.
 
-## 바로 쓰기 (설치 없음 · Claude 아티팩트)
-**https://claude.ai/artifact/AH2upZpLWUNtxnTgrZKyPY** — claude.ai에 로그인한 상태로 열면 됩니다.
-
-- 원본 화면(`public/`)을 그대로 쓰고, 서버가 하던 일만 브라우저가 대신합니다 ([artifact/browser-api.js](artifact/browser-api.js)).
-- 문제는 **페이지를 연 사람 본인의 Claude 계정**으로 만들어집니다. 처음 한 번 사용 허용을 묻습니다.
-- 파일은 브라우저 안에서만 읽고, 끝까지 푼 시험지는 그 브라우저에만 저장됩니다. 회원가입과 OCR은 꺼져 있습니다.
-- 다시 만들기: `python artifact/build.py . artifact/browser-api.js artifact/einstein-app.html` 후 생성된 HTML을 Claude 아티팩트로 게시(`sample` 기능 선언).
-
-## 내 PC에 설치해서 쓰기 (선택 · Agent 02 학우용)
+## 처음 쓰는 분 (Agent 02 학우용)
 이 서비스는 **각자 PC에서 실행**하고 **각자 Claude 계정**으로 문제를 만듭니다. 다른 사람의 계정이나 사용량을 쓰지 않습니다.
 
 1. [Node.js](https://nodejs.org) LTS(24 이상)를 설치합니다.
