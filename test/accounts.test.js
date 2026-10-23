@@ -1,0 +1,4 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {Accounts} from '../server/accounts.js';
+test('가입·로그인·세션 및 기록 소유권',async()=>{const a=new Accounts(':memory:');try{const u=await a.register('one@example.test','test-passphrase-one');const v=await a.register('two@example.test','test-passphrase-two');await assert.rejects(()=>a.login(u.email,'wrong'));assert.equal((await a.login(u.email,'test-passphrase-one')).id,u.id);const t=a.session(u);assert.equal(a.user(t).id,u.id);const exam={id:'exam',source:'do not save',token:'secret',questions:[{id:'1'}],answers:[{choice:0}]};const record=a.save(u,exam,'자료');assert.equal(a.list(u).length,1);assert.equal(a.get(u,record.id).source,undefined);assert.equal(a.get(u,record.id).token,undefined);assert.throws(()=>a.get(v,record.id));a.logout(t);assert.equal(a.user(t),null);assert.throws(()=>a.save(u,{questions:[1],answers:[]},'미완료'));}finally{a.close();}});

@@ -1,0 +1,23 @@
+{
+  "name": "understood-study",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node --env-file-if-exists=.env server/index.js",
+    "start": "node --env-file-if-exists=.env server/index.js",
+    "test": "node --test test/*.test.js",
+    "doctor": "node --env-file-if-exists=.env scripts/doctor.js",
+    "admin": "node --env-file-if-exists=.env scripts/create-admin.js",
+    "test:live": "node --env-file-if-exists=.env scripts/verify-live.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.71.0",
+    "@napi-rs/canvas": "^1.0.13",
+    "@tesseract.js-data/eng": "^1.0.0",
+    "@tesseract.js-data/kor": "^1.0.0",
+    "mammoth": "^1.11.0",
+    "pdfjs-dist": "^6.2.108",
+    "tesseract.js": "^7.0.0"
+  }
+}
