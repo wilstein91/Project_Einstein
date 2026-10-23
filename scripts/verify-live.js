@@ -9,7 +9,7 @@ import {scannedPDF} from '../test/pdf-fixtures.js';
 const directory=await mkdtemp(path.join(os.tmpdir(),'study-live-'));
 const accounts=new Accounts(path.join(directory,'accounts.sqlite'));
 await accounts.register('operator@example.test','temporary-live-test-password','admin');accounts.close();
-const child=spawn(process.execPath,['server/index.js'],{env:{...process.env,ACCOUNTS_ENABLED:'1',PORT:'0',RUNTIME_DIR:directory},windowsHide:true,stdio:['ignore','pipe','pipe']});
+const child=spawn(process.execPath,['server/index.js'],{env:{...process.env,PORT:'0',RUNTIME_DIR:directory},windowsHide:true,stdio:['ignore','pipe','pipe']});
 try{
   const base=await new Promise((resolve,reject)=>{const timer=setTimeout(()=>reject(Error('서버 시작 실패')),20000);let output='';child.on('error',reject);child.stdout.on('data',b=>{output+=b;const m=output.match(/Local: (http:\/\/127.0.0.1:\d+)/);if(m){clearTimeout(timer);resolve(m[1]);}});});
   async function request(p,body,token,cookie){const r=await fetch(base+p,{method:body?'POST':'GET',headers:{'Content-Type':'application/json',...(token?{'X-Exam-Token':token}:{}),...(cookie?{Cookie:cookie}:{})},...(body?{body:JSON.stringify(body)}:{})});const data=await r.json();if(!r.ok)throw Error(data.error);return {data,cookie:r.headers.get('set-cookie')?.split(';')[0]};}

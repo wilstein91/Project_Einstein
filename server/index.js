@@ -23,8 +23,6 @@ for(const name of await readdir(store)){
 }
 setInterval(async()=>{for(const [id,e]of exams){expireSource(e);if(Date.now()-e.createdAt>TTL){exams.delete(id);await unlink(path.join(store,id+'.json')).catch(()=>{});}}for(const [key,value]of limits)if(Date.now()-value.at>900000)limits.delete(key);},60000).unref();
 function rate(key,max,window=60000){const now=Date.now();let v=limits.get(key);if(!v||now-v.at>window)v={at:now,n:0};v.n++;limits.set(key,v);if(v.n>max){const e=Error('요청이 많습니다. 잠시 후 다시 시도해주세요.');e.status=429;throw e;}}
-// 회원가입·로그인·기록 저장은 구현 중: 코드는 두고 ACCOUNTS_ENABLED=1일 때만 켠다
-const ACCOUNTS_ENABLED=process.env.ACCOUNTS_ENABLED==='1';
 function requireUser(u){if(!u){const e=Error('로그인이 필요합니다.');e.status=401;throw e;}return u;}
 const server=http.createServer(async(req,res)=>{
   res.setHeader('Content-Security-Policy',"default-src 'self'; style-src 'self'; script-src 'self'; img-src 'self' data:; frame-ancestors 'none'; base-uri 'none'; form-action 'self'");
@@ -36,9 +34,8 @@ const server=http.createServer(async(req,res)=>{
     const url=new URL(req.url,'http://localhost');
     if(url.pathname.startsWith('/api/')){
       if(req.headers.origin&&new URL(req.headers.origin).host!==req.headers.host)return send(403,{error:'허용되지 않은 요청입니다.'});
-      const user=ACCOUNTS_ENABLED?accounts.user(cookieToken(req)):null;
-      if(req.method==='GET'&&url.pathname==='/api/config')return send(200,{...providerStatus(),ocr:true,accounts:ACCOUNTS_ENABLED,user});
-      if(!ACCOUNTS_ENABLED&&/^\/api\/(auth|records)(\/|$)/.test(url.pathname))return send(503,{error:'회원가입·로그인과 기록 저장은 구현 중입니다.'});
+      const user=accounts.user(cookieToken(req));
+      if(req.method==='GET'&&url.pathname==='/api/config')return send(200,{...providerStatus(),ocr:true,user});
       let body={};
       if(req.method==='POST'){
         let size=0;const chunks=[];for await(const chunk of req){size+=chunk.length;if(size>15*1024*1024)return send(413,{error:'요청 용량을 초과했습니다.'});chunks.push(chunk);}
